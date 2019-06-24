@@ -1,1 +1,8 @@
 sudo mn --custom delaytopo.py --topo delaytopo  --controller=remote,ip=127.0.0.1,port=6633 --switch ovs,protocols=OpenFlow13
+
+feature:install odl-restconf-all
+feature:install odl-l2switch-switch-ui
+feature:install odl-openflowplugin-flow-services-ui 
+feature:install odl-mdsal-all
+feature:install odl-dluxapps-applications
+feature:install odl-dluxapps-yangutils

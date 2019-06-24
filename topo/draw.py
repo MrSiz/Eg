@@ -25,8 +25,10 @@ def draw():
 
     plt.xlabel('serial number')
     plt.ylabel('time')
-    plt.legend()
+    plt.legend(loc='best')
+    plt.savefig('result.png')
     plt.show()
+
 
 
 

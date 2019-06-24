@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <ctime>
 #include <cstring>
+#include <thread>
+#include <mutex>
 
 #include <unistd.h>
 #include <netinet/in.h>
@@ -103,7 +105,7 @@ static EthernetII getEthernetII(const std::string& dst_ip_ = "10.0.0.4", const s
         RawPDU(get_nowtime());
 }
 
-
+std::mutex m;
 
 int main() {
     std::srand(unsigned(time(NULL)));
@@ -136,23 +138,38 @@ int main() {
     // auto eth = gen.getEthernetII();
     // sender.send(eth, iface);
 
-    const int MAX_CNT = 10;
-    const int MAX_NUM = 20;
+    const int MAX_CNT = 200;
+    const int MAX_NUM = 10;
+    std::vector<std::thread> vec;
+
 
     const std::string dest_ip = "10.0.0.4";
     const std::string dest_mac = "00:00:00:00:00:04";
 
     for (int packet_cnt = 0; packet_cnt < MAX_CNT; ++packet_cnt) {
-        std::cout << "\n";
-        auto rand_ip = get_randip();
-        auto rand_mac = get_randmac();
-        std::cout << "\n";
-        for (int send_num = 0; send_num < MAX_NUM; ++send_num) {
-            auto packet_to_send = getEthernetII(dest_ip, dest_mac, rand_ip, rand_mac);
-            sender.send(packet_to_send, dev);
-            sleep(1);
-        }
+        // for (int send_num = 0; send_num < MAX_NUM; ++send_num) {
+        //     auto packet_to_send = getEthernetII(dest_ip, dest_mac, rand_ip, rand_mac);
+        //     sender.send(packet_to_send, dev);
+        //     sleep(1);
+        // }
+        // std::cout << "rand_ip: " << rand_ip << std::endl;
+        // std::cout << "rand_mac: " << rand_mac << std::endl;
+        vec.push_back(std::thread{[&]() {
+            std::cout << "\n";
+            auto rand_ip = get_randip();
+            auto rand_mac = get_randmac();
+            std::cout << "\n";
+            for (int send_num = 0; send_num < MAX_NUM; ++send_num) {
+                auto packet_to_send = getEthernetII(dest_ip, dest_mac, rand_ip, rand_mac);
+                {
+                    // std::lock_guard<std::mutex> lk(m);
+                    sender.send(packet_to_send, dev);
+                    sleep(1);
+                }
+            }  
+        }});
     }
+    std::for_each(vec.begin(), vec.end(), std::mem_fn(&std::thread::join));
 
     return 0;
 }
