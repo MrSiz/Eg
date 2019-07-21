@@ -14,18 +14,18 @@ def readfile(FILENAME='record.log'):
         ip, dif = line.split(' ')
         # print ip, dif
         ip_record.setdefault(ip, [])
-        ip_record[ip].append(float(dif))
+        ip_record[ip].append(float(dif) + 2.0)
 
 
 def draw():
     for k, v in ip_record.items():
         print k, v
         x = range(1, len(v) + 1)
-        plt.plot(x, v, label=k)
+        plt.plot(x[3:-1], v[3:-1], label=k, marker='.')
 
     plt.xlabel('serial number')
     plt.ylabel('time')
-    plt.legend(loc='best')
+    #plt.legend(loc='best')
     plt.savefig('result.png')
     plt.show()
 
