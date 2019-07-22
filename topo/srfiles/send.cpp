@@ -107,7 +107,8 @@ static EthernetII getEthernetII(const std::string& dst_ip_ = "10.0.0.4", const s
 
 
 int main(int argc, char **argv) {
-	std::string dest_ip = "10.0.0.4", dest_mac = "00:00:00:00:00:04";
+    srand(unsigned(time(NULL)));
+    std::string dest_ip = "10.0.0.4", dest_mac = "00:00:00:00:00:04";
     int MAX_CNT = rand() % 10 + 1;
     int ch;
     while ((ch = getopt(argc, argv, "I:M:N:")) != -1) {
@@ -128,7 +129,7 @@ int main(int argc, char **argv) {
     std::cout << "MAX_CNT: " << MAX_CNT << "\n\n";
 
 
-    std::srand(unsigned(time(NULL)));
+
 
     auto interface_vec = NetworkInterface::all();
     NetworkInterface dev;
